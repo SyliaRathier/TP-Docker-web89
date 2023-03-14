@@ -1,0 +1,57 @@
+version: "3.8"
+services:
+  web89:
+    image: php:8.2-apache
+    container_name: web89
+    volumes:
+      - ./web89/html:/var/www/html
+    ports:
+      - 89:80
+  db:
+    container_name: pg_container
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: test_db
+    ports:
+      - "5432:5432"
+  pgadmin:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: sylia.rathier@etu.umontpellier.fr
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+  db-mysql:
+    image: mysql:5.7
+    container_name: db-mysql
+    environment:
+      PGADMIN_DEFAULT_EMAIL: sylia.rathier@etu.umontpellier.fr
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+
+  web90:
+    build: web90
+    container_name: web90
+    volumes:
+      - ./web90/html:/var/www/html
+    ports:
+      - 90:80
+
+  minetest:
+    image: lscr.io/linuxserver/minetest:latest
+    container_name: minetest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - /path/to/data:/config/.minetest
+    ports:
+      - 30000:30000/udp
+    restart: unless-stopped
